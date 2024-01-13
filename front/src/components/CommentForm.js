@@ -19,7 +19,7 @@ const CommentForm = ({post}) => {
     <>
       <Form onFinish={onSubmit}>
         <Input.TextArea placeholder="댓글 입력해요" value={content} onChange={onChangeContent} />
-        <Button htmlType="submit">짹짹</Button>
+        <Button htmlType="submit" style={{float:'right', zIndex:1}}>짹짹</Button>
       </Form>
     </>
   );

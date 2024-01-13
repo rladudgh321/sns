@@ -6,7 +6,9 @@ const initialState = {
       nickname: 'kkk',
     },
     content: '첫번째 게시글',
-    Images: [{src: '111'}, {src:'222'}, {src:'333'}],
+    Images: [{src: 'https://kormedi.com/wp-content/uploads/2022/11/ck-cm270027748-l-700x467.jpg'}, {
+    src:'https://health.chosun.com/site/data/img_dir/2023/07/14/2023071401917_0.jpg'}, {
+      src:'https://img.kr.news.samsung.com/kr/wp-content/uploads/2017/02/%ED%91%B8%EB%93%9C%ED%8F%AC%EC%BB%A4%EC%8A%A42%ED%8E%B807.jpg'}],
     Comments: [{
       id:1,
       User:{
@@ -26,6 +28,9 @@ const initialState = {
   addpostLoading: false,
   addpostDone: false,
   addpostError: null,
+  removepostLoading: false,
+  removepostDone: false,
+  removepostError: null,
   addcommentLoading: false,
   addcommentDone: false,
   addcommentError: null,
@@ -34,6 +39,9 @@ const initialState = {
 export const ADD_POST_REQUEST='ADD_POST_REQUEST';
 export const ADD_POST_SUCCESS='ADD_POST_SUCCESS';
 export const ADD_POST_FAILURE='ADD_POST_FAILURE';
+export const REMOVE_POST_REQUEST='REMOVE_POST_REQUEST';
+export const REMOVE_POST_SUCCESS='REMOVE_POST_SUCCESS';
+export const REMOVE_POST_FAILURE='REMOVE_POST_FAILURE';
 export const ADD_COMMENT_REQUEST='ADD_COMMENT_REQUEST';
 export const ADD_COMMENT_SUCCESS='ADD_COMMENT_SUCCESS';
 export const ADD_COMMENT_FAILURE='ADD_COMMENT_FAILURE';
@@ -46,7 +54,9 @@ const dummyPost = (data) => ({
     nickname: 'kkk',
   },
   content: data,
-  Images: [{src: '111'}, {src:'222'}, {src:'333'}],
+  Images: [{src: 'https://kormedi.com/wp-content/uploads/2022/11/ck-cm270027748-l-700x467.jpg'}, {
+    src:'https://health.chosun.com/site/data/img_dir/2023/07/14/2023071401917_0.jpg'}, {
+      src:'https://img.kr.news.samsung.com/kr/wp-content/uploads/2017/02/%ED%91%B8%EB%93%9C%ED%8F%AC%EC%BB%A4%EC%8A%A42%ED%8E%B807.jpg'}],
   Comments: [{
     id:3,
     User:{
@@ -94,6 +104,28 @@ const postReducer = (state = initialState, action) => {
         ...state,
         addpostLoading: false,
         addpostError: action.error,
+      }
+    case REMOVE_POST_REQUEST:
+      return {
+        ...state,
+        removepostLoading: true,
+        removepostDone: false,
+        removepostError: null,
+      }
+    case REMOVE_POST_SUCCESS:{
+      const mainPost = state.mainPost.filter((v) => v.id !== action.data);
+      return {
+        ...state,
+        mainPost,
+        removepostLoading: false,
+        removepostDone: true,
+      }
+    }
+    case REMOVE_POST_FAILURE:
+      return {
+        ...state,
+        removepostLoading: false,
+        removepostError: action.error,
       }
     case ADD_COMMENT_REQUEST:
       return {

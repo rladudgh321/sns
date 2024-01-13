@@ -2,9 +2,12 @@ import { Avatar, Button, Card, Image, List, Popover } from "antd";
 import { RetweetOutlined, HeartOutlined, MessageOutlined, HeartFilled, EllipsisOutlined } from '@ant-design/icons';
 import { useState, useCallback } from "react";
 import CommentForm from "./CommentForm";
-import { useSelector } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
+import { REMOVE_POST_REQUEST } from "@/reducer/post";
+import PostImage from "./PostImage";
 
 const PostCard = ({post}) => {
+  const dispatch = useDispatch();
   const { me } = useSelector((state) => state.user);
   const [like, setLike] = useState(false);
   const toggleLike = useCallback(()=>{
@@ -14,18 +17,24 @@ const PostCard = ({post}) => {
   const onToggleMessage = useCallback(() => {
     setMessage((prev) => !prev);
   },[]);
+  const onRemovePost = useCallback(() => {
+    dispatch({
+      type: REMOVE_POST_REQUEST,
+      data: post.id
+    })
+  },[dispatch, post.id]);
   return (
     <>
       <Card
         title = {<div>{'시간'}</div>}
         extra = {<Button>팔로잉</Button>}
-        cover={<Image src="https://kormedi.com/wp-content/uploads/2022/11/ck-cm270027748-l-700x467.jpg"></Image>}
+        cover={ <PostImage post={post} /> }
         actions={[
           <RetweetOutlined key='retweet' />,
           
           like
-            ? <HeartOutlined key='heart' onClick={toggleLike}/>
-            : <HeartFilled key='unheart' onClick={toggleLike} />,
+            ? <HeartFilled key='unheart' onClick={toggleLike} />
+            : <HeartOutlined key='heart' onClick={toggleLike}/>,
           
           <MessageOutlined key='message' onClick={onToggleMessage} />,
           <Popover key='more'  content={
@@ -34,7 +43,7 @@ const PostCard = ({post}) => {
                 me
                 ? <>
                     <Button>수정</Button>
-                    <Button>삭제</Button>
+                    <Button onClick={onRemovePost}>삭제</Button>
                   </>
                 :<Button>신고</Button>
               }
@@ -52,8 +61,9 @@ const PostCard = ({post}) => {
       </Card>
       {
         message && <>
-        <CommentForm post={post} />
+        {me && <CommentForm post={post} />}
           <List
+            style={{ margin: '40px 0 20px 0' }}
             bordered
             header= { `${post.Comments.length}개 댓글이 있습니다` }
             dataSource={post.Comments}
